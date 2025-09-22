@@ -46,7 +46,24 @@ const checkFlow = (function () {
   return hasAnyoneWon
   }
 
-  return { checkWin }
+  const decideFirstPlayer = () => {
+    const random = Math.random();
+    let firstPlayer;
+
+    if (random <= 0.5) {
+      firstPlayer = 1;
+    } else {
+      firstPlayer = 2;
+    }
+    return firstPlayer;
+  }
+
+  const checkTurn = () => {
+    let turnCount = 0
+    const 
+  }
+
+  return { checkWin, decideFirstPlayer }
 })()
 
 // const createGame = (function(game) {

@@ -1,6 +1,7 @@
 const TicTacToe = {
   board: [undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined],
-  gameTurn: 0
+  gameTurn: 0,
+  turnSinceWin: 0
 }
 
 const winnerParagraph = document.querySelector('#winner-error')
@@ -12,13 +13,11 @@ function createPlayer (name, sign) {
     players.push({name,sign})
   }
   addPlayerToPlayersObject();
-
   return { name, sign }
 }
 
 createPlayer('Cross player', 'X');
 createPlayer('Circle player', 'O');
-
 let currentPlayer = '';
 let winner;
 
@@ -34,7 +33,7 @@ function makeAMove(tile, player) {
 }
 
 function checkFlow (tile) {
-  if(checkIfGameIsWon() ) {
+  if(checkIfGameIsWon() === true) {
     console.log(`The winner is ${winner}!`)
     return
   }
@@ -88,27 +87,32 @@ function checkIfGameIsWon (){
     (case1 === case5 && case1 === case9 && case1 != undefined) ||
     (case3 === case5 && case3 === case7 && case3 != undefined)) {
     isGameWon = true;
+    TicTacToe.turnSinceWin +=1
     console.log('Stop the count!');
     return (isGameWon)
   }
 }
 
 function linkButtonsToTicTacToeArray () {
-  const allButtons = document.querySelectorAll('#tic-tac-toe-container button')
-  console.log(allButtons)
+  const allButtons = document.querySelectorAll('#tic-tac-toe-container button');
+
   allButtons.forEach((button) => {
     button.innerText = '\u2060';
     button.addEventListener('click', (event) => {
-      let lastCharacter = event.target.id.substr(event.target.id.length -1) -1
-      console.log(TicTacToe.board[lastCharacter]);
+      let lastCharacter = event.target.id.substr(event.target.id.length -1) -1;
       checkFlow(lastCharacter);
-      button.innerText = currentPlayer;
-    })
-  })
+
+      if (checkIfGameIsWon() && TicTacToe.turnSinceWin >2) {
+        return;
+      }
+      else {
+        button.innerText = currentPlayer;
+      }
+    });
+  });
 }
- linkButtonsToTicTacToeArray();
 
-
+linkButtonsToTicTacToeArray();
 
 /*   const decideFirstPlayer = () => {
     const random = Math.random();
@@ -124,7 +128,6 @@ function linkButtonsToTicTacToeArray () {
 
   const checkTurn = () => {
     let turnCount = 0
-
   }
 
   return { checkWin, decideFirstPlayer }

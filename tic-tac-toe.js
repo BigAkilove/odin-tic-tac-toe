@@ -2,68 +2,35 @@ const TicTacToe = {
   board: [undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined],
   gameTurn: 0,
   turnSinceWin: 0,
-  winner : ''
+  winner : '',
+  players : [],
+  currentPlayer: ''
 }
 
-const winnerParagraph = document.querySelector('#winner-announcement');
-
-const customPlayer1 = document.querySelector('#player1');
-const customPlayer2 = document.querySelector('#player2');
-const customPlayer1Button = document.querySelector('#change-name-button1');
-const customPlayer2Button = document.querySelector('#change-name-button2');
-
-customPlayer1Button.addEventListener('click', () => {
-  players[0].name = customPlayer1.value;
-});
-customPlayer2Button.addEventListener('click', () => {
-  players[1].name = customPlayer2.value;
-});
-
-const resetButton = document.querySelector('#reset-button');
-resetButton.addEventListener('click',() => {
-
-  TicTacToe.board = [undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined];
-  TicTacToe.gameTurn = 0;
-  TicTacToe.turnSinceWin = 0;
-  TicTacToe.winner = ''; 
-  winnerParagraph.innerText = 'The winner is...';
-  currentPlayer = '';
-  const allButtons = document.querySelectorAll('#tic-tac-toe-container button');
-
-  allButtons.forEach((button) => {
-    button.innerText = '\u2060';
-  })
-})
-
-const players = [];
+const gameflow = (function () {
 
 function createPlayer (name, sign) {
   function addPlayerToPlayersObject() {
-    players.push({name,sign});
+    TicTacToe.players.push({name,sign});
   }
   addPlayerToPlayersObject();
   
   return { name, sign }
 }
 
-createPlayer('Cross player', 'X');
-createPlayer('Circle player', 'O');
-
-let currentPlayer = '';
-
 function makeAMove(tile, player) {
-  if (player === players[0].name) {
+  if (player === TicTacToe.players[0].name) {
     TicTacToe.board[tile] = 'X';
-    currentPlayer = 'X'
-  } else if (player === players[1].name) {
+    TicTacToe.currentPlayer = 'X'
+  } else if (player === TicTacToe.players[1].name) {
     TicTacToe.board[tile] = 'O';
-    currentPlayer = 'O'
+    TicTacToe.currentPlayer = 'O'
   }
   console.log(TicTacToe.board)
 }
 
 function checkFlow (tile) {
-  if(checkIfGameIsWon() === true) return
+  if(gameflow.checkIfGameIsWon() === true) return
 
   if (TicTacToe.board[tile] === undefined) {
 
@@ -71,22 +38,23 @@ function checkFlow (tile) {
     if (TicTacToe.gameTurn >8 ) return 'game over';
 
     if (TicTacToe.gameTurn % 2  === 0) {
-      player = players[0].name;
+      player = TicTacToe.players[0].name;
       TicTacToe.gameTurn += 1;
 
     } else if (TicTacToe.gameTurn % 2  === 1) {
-      player = players[1].name;
+      player = TicTacToe.players[1].name;
       TicTacToe.gameTurn += 1;
     }
 
-    makeAMove (tile, player);
-    if(checkIfGameIsWon() ) {
+    gameflow.makeAMove (tile, player);
+    if(gameflow.checkIfGameIsWon() ) {
 
       if (TicTacToe.board[tile] === 'X') {
-        TicTacToe.winner = players[0].name
-      } else TicTacToe.winner = players[1].name
+        TicTacToe.winner = TicTacToe.players[0].name
+      } else TicTacToe.winner = TicTacToe.players[1].name
+        const winnerParagraph = document.querySelector('#winner-announcement');
         winnerParagraph.innerText = `The winner is ${TicTacToe.winner}!`
-        showWinnerDialog(true)
+        gameflow.showWinnerDialog(true)
         return
     }
     console.log(TicTacToe.board[tile])
@@ -130,19 +98,17 @@ function linkButtonsToTicTacToeArray () {
     button.innerText = '\u2060';
     button.addEventListener('click', (event) => {
       let lastCharacter = event.target.id.substr(event.target.id.length -1) -1;
-      checkFlow(lastCharacter);
+      gameflow.checkFlow(lastCharacter);
 
       if (checkIfGameIsWon() && TicTacToe.turnSinceWin >2) {
         return;
       }
       else {
-        button.innerText = currentPlayer;
+        button.innerText = TicTacToe.currentPlayer;
       }
     });
   });
 }
-
-linkButtonsToTicTacToeArray();
 
 function showWinnerDialog (boolean) {
   const winnerDialog = document.querySelector('#winner-dialog')
@@ -158,3 +124,43 @@ function showWinnerDialog (boolean) {
     winnerDialog.close();
   })
 }
+
+function createCustomPlayer () {
+  const customPlayer1 = document.querySelector('#player1')
+  const customPlayer1Button = document.querySelector('#change-name-button1');
+  customPlayer1Button.addEventListener('click', () => {
+    TicTacToe.players[0].name = customPlayer1.value;
+  });
+
+  const customPlayer2Button = document.querySelector('#change-name-button2');
+  customPlayer2Button.addEventListener('click', () => {
+    TicTacToe.players[1].name = customPlayer2.value;
+  });
+}
+
+function resetTheGame () {
+  const resetButton = document.querySelector('#reset-button');
+  resetButton.addEventListener('click',() => {
+    const winnerParagraph = document.querySelector('#winner-announcement');
+    TicTacToe.board = [undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined];
+    TicTacToe.gameTurn = 0;
+    TicTacToe.turnSinceWin = 0;
+    TicTacToe.winner = ''; 
+    winnerParagraph.innerText = 'The winner is...';
+    currentPlayer = '';
+    const allButtons = document.querySelectorAll('#tic-tac-toe-container button');
+
+    allButtons.forEach((button) => {
+      button.innerText = '\u2060';
+    })
+  })
+}
+
+  return {createPlayer, makeAMove, checkFlow,checkIfGameIsWon,linkButtonsToTicTacToeArray,showWinnerDialog, createCustomPlayer, resetTheGame}
+})();
+
+gameflow.createPlayer('Cross player', 'X');
+gameflow.createPlayer('Circle player', 'O');
+gameflow.linkButtonsToTicTacToeArray();
+gameflow.createCustomPlayer();
+gameflow.resetTheGame();

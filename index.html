@@ -10,7 +10,7 @@
     <div id="header"></div>
 
     <div id="content">
-        <p id="winner-error"></p>
+
         <div id="tic-tac-toe-container">
             <button id="case-number1">" "</button>
             <button id="case-number2">" "</button>
@@ -23,8 +23,25 @@
             <button id="case-number7">" "</button>
             <button id="case-number8">" "</button>
             <button id="case-number9">" "</button>
-            <script src="tic-tac-toe.js"> </script>
+            
         </div>
+
+        <p id="winner-announcement">The winner is...</p>
+
+        <div>
+            <label for="player1">Player 1 (circle)</label> <input type="text" id="player1"> <button class="change-name-button" id="change-name-button1">Change name</button>
+        </div>
+        <div>
+            <label for="player 2">Player 2 (cross):</label> <input type="text" id="player2"> <button class="change-name-button" id="change-name-button2">Change name</button>
+        </div>
+        <button id="reset-button">Reset!</button>
     </div>
+
+    <dialog id="winner-dialog">
+        <p id="dialog-winner-paragraph"></p>
+        <button id="close-dialog">Yay!</button>
+    </dialog>
+
+    <script src="tic-tac-toe.js"> </script>
 </body>
 </html>
